@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo de Aguascalientes</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+    </style>
+</head>
+<body>
+    <h1>Aplicación con la biblioteca de Javascript (Leaflet) y OpenStreetMap</h1>
+    <center><div id="map"></div></center>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script>        
+            const map = L.map('map').setView([21.88234, -102.28259], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            if (navigator.geolocation){
+                navigator.geolocation.getCurrentPosition((position)=>{
+                    const usuario = [position.coords.latitude, position.coords.longitude];
+                    map.setView(usuario, 14);
+                    const usuariomarca = L.marker(usuario).addTo(map).bindPopup('Estas aqui').openPopup();
+                    //Aniadir un marcador en Aguascalientes capital 
+                    var marker = L.marker([21.88234, -102.28259]).addTo(map); 
+                    // Añadir un pop-up al marcador 
+                    marker.bindPopup("<b>¡Bienvenidos a Aguascalientes!</b><br>Capital del Estado.").openPopup();
+
+                    //Iconos
+                    var IconMD = L.icon({
+                        iconUrl: 'https://i.ytimg.com/vi/wr7fHWLZyOk/maxresdefault.jpg',  // URL de la imagen que deseas usar
+                        iconSize: [38, 38],
+                    });
+                    var IconPP = L.icon({
+                        iconUrl: 'https://www.travelbymexico.com/aguaatr/agua7816YYD.jpg',  // URL de la imagen que deseas usar
+                        iconSize: [38, 38],
+                    });
+                    var IconMM = L.icon({
+                        iconUrl: 'https://mxc.com.mx/wp-content/uploads/2024/08/48170964_2112980485698497_1497329387270307840_o.jpg-8.jpg   ',  // URL de la imagen que deseas usar
+                        iconSize: [38, 38],
+                    }); 
+
+                    // Marcador en la Plaza de la Patria 
+                    var plazaPatria = L.marker([21.88187, -102.29495], { icon: IconPP}).addTo(map);
+                    plazaPatria.bindPopup("<b>Plaza de la Patria</b><br>Corazón de Aguascalientes.");
+
+                    // Marcador en el Museo Nacional de la Muerte 
+                    var museoMuerte = L.marker([21.88417, -102.28878], { icon: IconMM}).addTo(map); 
+                    museoMuerte.bindPopup("<b>Museo Nacional de la Muerte</b><br>Un lugar único.");
+                    //Museo Descubre
+                    var museoDescubre = L.marker([21.855566, -102.288567], { icon: IconMD}).addTo(map); 
+                    museoDescubre.bindPopup("<b>Museo Descubre</b><br>Un lugar ideal para ir en familia.");
+                    // Dibujar un círculo en el recinto de la Feria Nacional de San Marcos 
+                    var feriaSanMarcos = L.circle([21.87888, -102.29727] ,{ 
+                    color: 'yellow', 
+                    fillColor: '#ffff00', 
+                    fillOpacity: 0.4, 
+                    radius: 350 
+                    }).addTo(map); 
+                    feriaSanMarcos.bindPopup("<b>Feria Nacional de San Marcos</b><br>El evento más importante de Aguascalientes.");
+                    
+                    //Piligono del centro historico
+                    var centroHistorico = L.polygon([ 
+                    [21.8821, -102.2935], 
+                    [21.8829, -102.2865], 
+                    [21.8797, -102.2860], 
+                    [21.8792, -102.2920]
+                    ]).addTo(map); 
+                    
+                    centroHistorico.bindPopup("<b>Centro Histórico de Aguascalientes</b><br>Una joya colonial.");
+                    var baseMaps = { 
+                        "Mapa base": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png') 
+                    }; 
+                        
+                    var overlayMaps = { 
+                        "Lugares importantes": L.layerGroup([marker, plazaPatria, museoMuerte, museoDescubre]), 
+                        "Feria de San Marcos": feriaSanMarcos, 
+                        "Centro Histórico": centroHistorico 
+                    }; 
+                        
+                        L.control.layers(baseMaps, overlayMaps).addTo(map);
+                },()=>{
+                    alert('No se pudo obtener la ubicacion');
+                });
+            }else{
+                alert('Geolocalizacion no soportada por este navegador')
+            };
+            
+    </script>
+    
+</body>
+</html>
